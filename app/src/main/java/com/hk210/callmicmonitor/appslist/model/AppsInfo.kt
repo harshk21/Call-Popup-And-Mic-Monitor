@@ -7,5 +7,5 @@ data class AppsInfo(
     val packageName: String,
     val icon: Drawable,
     val hasMicrophoneAccess: Boolean,
-    val backgroundAccessDetected: Boolean
+    val hasBackgroundAccess: Boolean
 )

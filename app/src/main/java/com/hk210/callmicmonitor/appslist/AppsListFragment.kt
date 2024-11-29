@@ -1,21 +1,25 @@
 package com.hk210.callmicmonitor.appslist
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hk210.callmicmonitor.R
 import com.hk210.callmicmonitor.alert.Alert
 import com.hk210.callmicmonitor.appslist.adpater.AppsListAdapter
 import com.hk210.callmicmonitor.appslist.model.AppsInfo
 import com.hk210.callmicmonitor.databinding.AppsListFragmentBinding
 import com.hk210.callmicmonitor.util.Result
 import com.hk210.callmicmonitor.util.loader.LoaderUtils
+import com.hk210.callmicmonitor.util.permissions.PermissionHelper
+import com.hk210.callmicmonitor.util.permissions.PermissionStates
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AppsListFragment : Fragment() {
@@ -25,6 +29,9 @@ class AppsListFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: AppsListViewModel by viewModels()
+
+    @Inject
+    lateinit var permissionHelper: PermissionHelper
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,8 +44,47 @@ class AppsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getAppsList()
         observeAppsList()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        permissionHelper.checkUsageAccessPermission()
+        observePermissionState()
+    }
+
+    private fun observePermissionState() {
+        lifecycleScope.launch {
+            permissionHelper.isPermissionGranted.collect { permissionState ->
+                when (permissionState) {
+                    PermissionStates.PERMISSION_GRANTED -> {
+                        viewModel.getAppsList()
+                    }
+
+                    PermissionStates.PERMISSION_DENIED -> {
+                        permissionHelper.requestUsageAccessPermission()
+                    }
+
+                    PermissionStates.PERMISSION_RATIONALE -> {
+                        Alert.showDialog(
+                            requireContext(),
+                            title = requireContext().getString(R.string.usage_access_dialog_title),
+                            message = requireContext().getString(R.string.usage_access_rationale_message),
+                            positiveButtonText = requireContext().getString(R.string.grant_permission),
+                            negativeButtonText = requireContext().getString(R.string.deny_permission),
+                            { dialog ->
+                                dialog.dismiss()
+                                permissionHelper.requestUsageAccessPermission()
+                            },
+                            { dialog ->
+                                dialog.dismiss()
+                                requireActivity().finish()
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun observeAppsList() {
@@ -49,6 +95,7 @@ class AppsListFragment : Fragment() {
                     LoaderUtils.hideDialog()
                     Alert.showSnackBar(binding.root, result.message.toString())
                 }
+
                 is Result.Success -> {
                     LoaderUtils.hideDialog()
                     result.data?.let { setAppsList(it) }
@@ -58,21 +105,14 @@ class AppsListFragment : Fragment() {
     }
 
     private fun setAppsList(appsList: List<AppsInfo>) {
-        val adapter = AppsListAdapter { packageName ->
-            launchAppSettings(packageName)
+        val adapter = AppsListAdapter(requireContext()) { packageName ->
+            permissionHelper.redirectToAppSettings(packageName)
         }
         adapter.submitList(appsList)
         binding.appsList.apply {
             this.adapter = adapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-    }
-
-    private fun launchAppSettings(packageName: String) {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = android.net.Uri.parse("package:$packageName")
-        }
-        startActivity(intent)
     }
 
     override fun onDestroyView() {
