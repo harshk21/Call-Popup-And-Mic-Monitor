@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
-import com.hk210.callmicmonitor.R
 
 object Alert {
 
