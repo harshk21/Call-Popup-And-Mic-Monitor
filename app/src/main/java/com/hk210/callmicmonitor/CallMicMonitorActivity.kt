@@ -5,6 +5,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.hk210.callmicmonitor.databinding.CallMicMonitorActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,6 +29,18 @@ class CallMicMonitorActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        setupBottomNavigation()
+    }
+
+    fun setToolbarTitle(title: String) {
+        binding.toolbarTitle.text = title
+    }
+
+    private fun setupBottomNavigation() {
+        val navHostFragment =
+            binding.fragmentContainerView.getFragment<NavHostFragment>()
+        binding.bottomNavView.setupWithNavController(navHostFragment.navController)
     }
 
     override fun onDestroy() {

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hk210.callmicmonitor.CallMicMonitorActivity
 import com.hk210.callmicmonitor.R
 import com.hk210.callmicmonitor.alert.Alert
 import com.hk210.callmicmonitor.appslist.adpater.AppsListAdapter
@@ -18,6 +19,8 @@ import com.hk210.callmicmonitor.util.loader.LoaderUtils
 import com.hk210.callmicmonitor.util.permissions.PermissionHelper
 import com.hk210.callmicmonitor.util.permissions.PermissionStates
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,18 +47,20 @@ class AppsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (requireActivity() as CallMicMonitorActivity).setToolbarTitle(requireContext().getString(R.string.apps_list_toolbar_title))
         observeAppsList()
     }
 
     override fun onResume() {
         super.onResume()
+
         permissionHelper.checkUsageAccessPermission()
         observePermissionState()
     }
 
     private fun observePermissionState() {
         lifecycleScope.launch {
-            permissionHelper.isPermissionGranted.collect { permissionState ->
+            permissionHelper.isPermissionGranted.distinctUntilChanged().collectLatest { permissionState ->
                 when (permissionState) {
                     PermissionStates.PERMISSION_GRANTED -> {
                         viewModel.getAppsList()

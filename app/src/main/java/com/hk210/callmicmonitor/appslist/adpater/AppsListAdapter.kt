@@ -21,25 +21,47 @@ class AppsListAdapter(private val context: Context, private val onClickListener:
     }
 
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(currentList[position])
     }
+
+    override fun getItemId(position: Int) = position.toLong()
+
+    override fun getItemCount(): Int = currentList.size
 
     class AppViewHolder(
         private val binding: AppsListItemBinding,
         private val context: Context,
-        private val onClickListener: (String) -> Unit
+        private val onClickListener: (String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(appInfo: AppsInfo) {
             binding.appName.text = appInfo.appName
             binding.appIcon.setImageDrawable(appInfo.icon)
-            val status = if (appInfo.hasBackgroundAccess) context.getString(R.string.bg_access_detected) else context.getString(R.string.bg_access_not_detected)
-            binding.appStatus.text = status
-            val color = if(appInfo.hasMicrophoneAccess) R.color.green else R.color.red
-            binding.root.setBackgroundColor(ContextCompat.getColor(context, color))
+            setBackgroundColor(appInfo)
+            setAppStatus(appInfo)
+            setSeeMoreClickListener(appInfo.packageName)
+        }
 
+        private fun setAppStatus(appInfo: AppsInfo) {
+            val status =
+                if (appInfo.hasBackgroundAccess) context.getString(R.string.bg_access_detected) else context.getString(
+                    R.string.bg_access_not_detected
+                )
+            binding.appStatus.text = status
+        }
+
+        private fun setBackgroundColor(appInfo: AppsInfo) {
+            val color = if (appInfo.hasMicrophoneAccess && appInfo.hasBackgroundAccess) {
+                R.color.green
+            } else {
+                android.R.color.transparent
+            }
+            binding.root.setBackgroundColor(ContextCompat.getColor(context, color))
+        }
+
+        private fun setSeeMoreClickListener(packageName: String) {
             binding.openAppInfo.setOnClickListener {
-                onClickListener.invoke(appInfo.packageName)
+                onClickListener.invoke(packageName)
             }
         }
     }

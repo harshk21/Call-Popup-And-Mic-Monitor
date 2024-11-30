@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import com.hk210.callmicmonitor.appslist.model.AppsInfo
 import com.hk210.callmicmonitor.util.Result
+import com.hk210.callmicmonitor.util.UsageAccessHelper
 import com.hk210.callmicmonitor.util.permissions.PermissionHelper
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -14,7 +15,8 @@ import javax.inject.Singleton
 @Singleton
 class AppsRepository @Inject constructor(
     private val packageManager: PackageManager,
-    private val permissionHelper: PermissionHelper
+    private val permissionHelper: PermissionHelper,
+    private val usageAccessHelper: UsageAccessHelper
 ) {
 
     fun getAppsList() = flow<Result<List<AppsInfo>>> {
@@ -45,8 +47,11 @@ class AppsRepository @Inject constructor(
             if (hasMicrophonePermission) {
 
                 // Check if the app is allowed to access microphone
-                val hasMicrophoneAccess =
-                    permissionHelper.checkMicrophonePermission(packageInfo.packageName)
+                val hasMicrophoneAccess = permissionHelper.checkMicrophonePermission(packageInfo.packageName)
+
+                // CHeck if app ran in background in last 24 hours
+                val hasBackgroundAccess = usageAccessHelper.isAppRunningBackgroundService(packageInfo.packageName)
+
 
                 apps.add(
                     AppsInfo(
@@ -54,7 +59,7 @@ class AppsRepository @Inject constructor(
                         packageName = packageInfo.packageName,
                         icon = packageManager.getApplicationIcon(packageInfo),
                         hasMicrophoneAccess = hasMicrophoneAccess,
-                        hasBackgroundAccess = false
+                        hasBackgroundAccess = hasBackgroundAccess
                     )
                 )
             }

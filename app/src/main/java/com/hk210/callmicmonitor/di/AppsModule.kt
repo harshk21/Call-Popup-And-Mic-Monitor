@@ -1,5 +1,7 @@
 package com.hk210.callmicmonitor.di
 
+import android.annotation.SuppressLint
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.telephony.TelephonyManager
@@ -28,4 +30,10 @@ class AppsModule {
     @Singleton
     fun provideTelephonyManager(@ApplicationContext context: Context): TelephonyManager =
         context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+
+    @SuppressLint("InlinedApi")
+    @Provides
+    @Singleton
+    fun provideUsageStatsManager(@ApplicationContext context: Context): UsageStatsManager =
+        context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 }

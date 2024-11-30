@@ -6,9 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,19 +26,8 @@ class PermissionHelper @Inject constructor(
     private val _isPermissionGranted = MutableStateFlow(PermissionStates.PERMISSION_DENIED)
     val isPermissionGranted: Flow<@PermissionStates.PermissionState Int> get() = _isPermissionGranted.asStateFlow()
 
-    /**
-     * Requests a permission and handles the callback in an Activity or Fragment.
-     * @param permissions The array of permissions to request
-     * @param requestCode The request code for the permission
-     * @param activity The activity context
-     */
-    fun requestPermissions(
-        permissions: Array<String>,
-        requestCode: Int,
-        activity: FragmentActivity
-    ) {
-        ActivityCompat.requestPermissions(activity, permissions, requestCode)
-    }
+    private val _isOverlayPermissionGranted = MutableStateFlow(PermissionStates.PERMISSION_GRANTED)
+    val isOverlayPermissionGranted: Flow<@PermissionStates.PermissionState Int> get() = _isOverlayPermissionGranted.asStateFlow()
 
     /**
      * Checks if a regular permission is granted.
@@ -112,9 +101,39 @@ class PermissionHelper @Inject constructor(
      */
     fun redirectToAppSettings(packageName: String) {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = android.net.Uri.parse("package:${packageName}")
+            data = Uri.parse("package:${packageName}")
             flags = FLAG_ACTIVITY_NEW_TASK
         }
         context.startActivity(intent)
+    }
+
+    /**
+     * Checks if the app has overlay permission.
+     * @return true if granted else false.
+     */
+    fun checkOverlayPermission() {
+        val isGranted =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Settings.canDrawOverlays(context)
+        } else {
+            true
+        }
+        _isOverlayPermissionGranted.value = when (isGranted) {
+            true -> PermissionStates.PERMISSION_GRANTED
+            false -> PermissionStates.PERMISSION_DENIED
+            else -> PermissionStates.PERMISSION_RATIONALE
+        }
+    }
+
+    /**
+     * Requests overlay permission by redirecting the user to the settings page.
+     * @param activity The activity context for handling permissions.
+     */
+    fun requestOverlayPermission(activity: FragmentActivity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
+                data = Uri.parse("package:${context.packageName}")
+            }
+            activity.startActivity(intent)
+        }
     }
 }

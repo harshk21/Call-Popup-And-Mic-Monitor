@@ -11,6 +11,13 @@
     <string name="usage_access_dialog_title">Usage Access Permission</string>
     <string name="usage_access_rationale_message">To provide personalized insights and monitor app usage, we require Usage Access permission. Please grant this permission to allow the app to function correctly.</string>
     <string name="content_description_logo">Logo</string>
-    <string name="apps_list_toolbar_title">Apps List</string>
+    <string name="apps_list_toolbar_title">Microphone Access List</string>
     <string name="settings_icon_description">Right Icon</string>
+    <string name="apps_list_menu">Apps</string>
+    <string name="settings_menu">Settings</string>
+    <string name="allow_call_popup">Allow Call Popup</string>
+    <string name="allow_draw_over_apps_permission">Allow draw over apps permission</string>
+    <string name="call_popup_title">Call Popup</string>
+    <string name="draw_over_apps_title">Draw Over Apps Permission</string>
+    <string name="draw_over_apps_message">To provide you with a seamless experience, we need permission to display content over other apps</string>
 </resources>
