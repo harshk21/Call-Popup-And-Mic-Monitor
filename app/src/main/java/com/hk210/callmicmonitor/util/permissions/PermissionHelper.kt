@@ -26,7 +26,7 @@ class PermissionHelper @Inject constructor(
     private val _isPermissionGranted = MutableStateFlow(PermissionStates.PERMISSION_DENIED)
     val isPermissionGranted: Flow<@PermissionStates.PermissionState Int> get() = _isPermissionGranted.asStateFlow()
 
-    private val _isOverlayPermissionGranted = MutableStateFlow(PermissionStates.PERMISSION_GRANTED)
+    private val _isOverlayPermissionGranted = MutableStateFlow(PermissionStates.PERMISSION_RATIONALE)
     val isOverlayPermissionGranted: Flow<@PermissionStates.PermissionState Int> get() = _isOverlayPermissionGranted.asStateFlow()
 
     /**
@@ -119,7 +119,6 @@ class PermissionHelper @Inject constructor(
         }
         _isOverlayPermissionGranted.value = when (isGranted) {
             true -> PermissionStates.PERMISSION_GRANTED
-            false -> PermissionStates.PERMISSION_DENIED
             else -> PermissionStates.PERMISSION_RATIONALE
         }
     }

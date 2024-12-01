@@ -1,4 +1,4 @@
-package com.hk210.callmicmonitor.appslist.adpater
+package com.hk210.callmicmonitor.features.apps_list.adpater
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hk210.callmicmonitor.R
-import com.hk210.callmicmonitor.appslist.model.AppsInfo
 import com.hk210.callmicmonitor.databinding.AppsListItemBinding
+import com.hk210.callmicmonitor.features.apps_list.model.AppsInfo
 
 class AppsListAdapter(private val context: Context, private val onClickListener: (String) -> Unit) :
     ListAdapter<AppsInfo, AppsListAdapter.AppViewHolder>(DiffCallback()) {

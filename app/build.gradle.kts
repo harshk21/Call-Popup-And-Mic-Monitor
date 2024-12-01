@@ -76,6 +76,9 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.kapt)
 
+    // Datastore
+    implementation(libs.androidx.datastore.preferences)
+
     testImplementation(libs.junit)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.mockk)

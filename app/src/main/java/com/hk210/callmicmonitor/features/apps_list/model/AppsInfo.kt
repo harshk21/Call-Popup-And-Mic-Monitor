@@ -1,4 +1,4 @@
-package com.hk210.callmicmonitor.appslist.model
+package com.hk210.callmicmonitor.features.apps_list.model
 
 import android.graphics.drawable.Drawable
 

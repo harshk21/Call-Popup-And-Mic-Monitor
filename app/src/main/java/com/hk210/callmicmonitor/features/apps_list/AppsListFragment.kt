@@ -1,4 +1,4 @@
-package com.hk210.callmicmonitor.appslist
+package com.hk210.callmicmonitor.features.apps_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.hk210.callmicmonitor.CallMicMonitorActivity
 import com.hk210.callmicmonitor.R
 import com.hk210.callmicmonitor.alert.Alert
-import com.hk210.callmicmonitor.appslist.adpater.AppsListAdapter
-import com.hk210.callmicmonitor.appslist.model.AppsInfo
 import com.hk210.callmicmonitor.databinding.AppsListFragmentBinding
+import com.hk210.callmicmonitor.features.apps_list.adpater.AppsListAdapter
+import com.hk210.callmicmonitor.features.apps_list.model.AppsInfo
 import com.hk210.callmicmonitor.util.Result
 import com.hk210.callmicmonitor.util.loader.LoaderUtils
 import com.hk210.callmicmonitor.util.permissions.PermissionHelper
@@ -49,13 +49,20 @@ class AppsListFragment : Fragment() {
 
         (requireActivity() as CallMicMonitorActivity).setToolbarTitle(requireContext().getString(R.string.apps_list_toolbar_title))
         observeAppsList()
+        onGrantClicked()
+        observePermissionState()
     }
 
     override fun onResume() {
         super.onResume()
 
         permissionHelper.checkUsageAccessPermission()
-        observePermissionState()
+    }
+
+    private fun onGrantClicked() {
+        binding.grantPermission.setOnClickListener {
+            permissionHelper.requestUsageAccessPermission()
+        }
     }
 
     private fun observePermissionState() {
@@ -63,13 +70,10 @@ class AppsListFragment : Fragment() {
             permissionHelper.isPermissionGranted.distinctUntilChanged().collectLatest { permissionState ->
                 when (permissionState) {
                     PermissionStates.PERMISSION_GRANTED -> {
+                        binding.appsList.visibility = View.VISIBLE
+                        binding.permissionMessageLayout.visibility = View.GONE
                         viewModel.getAppsList()
                     }
-
-                    PermissionStates.PERMISSION_DENIED -> {
-                        permissionHelper.requestUsageAccessPermission()
-                    }
-
                     PermissionStates.PERMISSION_RATIONALE -> {
                         Alert.showDialog(
                             requireContext(),
@@ -83,7 +87,8 @@ class AppsListFragment : Fragment() {
                             },
                             { dialog ->
                                 dialog.dismiss()
-                                requireActivity().finish()
+                                binding.appsList.visibility = View.GONE
+                                binding.permissionMessageLayout.visibility = View.VISIBLE
                             }
                         )
                     }

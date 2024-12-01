@@ -5,6 +5,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.telephony.TelephonyManager
+import android.view.WindowManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppsModule {
+object AppsModule {
 
     @Provides
     @Singleton
@@ -36,4 +37,9 @@ class AppsModule {
     @Singleton
     fun provideUsageStatsManager(@ApplicationContext context: Context): UsageStatsManager =
         context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+
+    @Provides
+    @Singleton
+    fun provideWindowManager(@ApplicationContext context: Context): WindowManager =
+        context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 }

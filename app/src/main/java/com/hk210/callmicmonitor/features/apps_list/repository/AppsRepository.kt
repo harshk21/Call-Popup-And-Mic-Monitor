@@ -1,8 +1,8 @@
-package com.hk210.callmicmonitor.appslist.repository
+package com.hk210.callmicmonitor.features.apps_list.repository
 
 import android.content.pm.PackageManager
 import android.os.Build
-import com.hk210.callmicmonitor.appslist.model.AppsInfo
+import com.hk210.callmicmonitor.features.apps_list.model.AppsInfo
 import com.hk210.callmicmonitor.util.Result
 import com.hk210.callmicmonitor.util.UsageAccessHelper
 import com.hk210.callmicmonitor.util.permissions.PermissionHelper

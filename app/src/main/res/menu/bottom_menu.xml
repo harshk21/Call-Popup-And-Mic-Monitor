@@ -4,12 +4,12 @@
 
     <item
         android:id="@+id/appsListFragment"
-        android:icon="@drawable/baseline_auto_awesome_mosaic_24"
+        android:icon="@drawable/ic_apps"
         android:title="@string/apps_list_menu"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/callPopupFragment"
-        android:icon="@drawable/baseline_build_24"
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/ic_apps_build_24"
         android:title="@string/settings_menu"
         app:showAsAction="ifRoom" />
 </menu>

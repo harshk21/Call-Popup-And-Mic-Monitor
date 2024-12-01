@@ -20,4 +20,7 @@
     <string name="call_popup_title">Call Popup</string>
     <string name="draw_over_apps_title">Draw Over Apps Permission</string>
     <string name="draw_over_apps_message">To provide you with a seamless experience, we need permission to display content over other apps</string>
+    <string name="no_permission_allowed">No Permission Allowed</string>
+    <string name="enable_dark_mode">Enable Dark Mode</string>
+    <string name="allow_overlay_permission">Allow overlay permission</string>
 </resources>

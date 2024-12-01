@@ -1,11 +1,11 @@
-package com.hk210.callmicmonitor.appslist
+package com.hk210.callmicmonitor.features.apps_list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hk210.callmicmonitor.appslist.model.AppsInfo
-import com.hk210.callmicmonitor.appslist.repository.AppsRepository
+import com.hk210.callmicmonitor.features.apps_list.model.AppsInfo
+import com.hk210.callmicmonitor.features.apps_list.repository.AppsRepository
 import com.hk210.callmicmonitor.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

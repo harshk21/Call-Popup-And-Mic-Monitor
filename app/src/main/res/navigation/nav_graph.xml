@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/appsListFragment"
-        android:name="com.hk210.callmicmonitor.appslist.AppsListFragment"
+        android:name="com.hk210.callmicmonitor.features.apps_list.AppsListFragment"
         android:label="apps_list_fragment"
         tools:layout="@layout/apps_list_fragment" />
 
     <fragment
-        android:id="@+id/callPopupFragment"
-        android:name="com.hk210.callmicmonitor.callpopup.CallPopupFragment"
+        android:id="@+id/settingsFragment"
+        android:name="com.hk210.callmicmonitor.features.settings.SettingsFragment"
         android:label="call_popup_fragment"
-        tools:layout="@layout/call_popup_fragment" />
+        tools:layout="@layout/settings_fragment" />
 </navigation>
